@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "jsx": "react",
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*",
+    "./types"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
+}
