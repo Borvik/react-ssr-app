@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "lib": ["es2017", "DOM"],
+    "target": "es6",
     "sourceMap": true,
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "jsx": "react",

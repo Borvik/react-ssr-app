@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { ReactComponent as Logo } from './logo.svg';
+import loadable from '@loadable/component';
 import './style.scss';
+
+const LoadedButton = loadable(() => import('./loaded_button'));
 
 export function App() {
   const [c, setC] = useState(0);
@@ -19,7 +22,7 @@ export function App() {
         >
           Learn React
         </a>
-        <button onClick={() => setC(d => d + 1)}>Clicked: {c}</button>
+        <LoadedButton onClick={() => setC(d => d + 1)}>Clicked: {c}</LoadedButton>
       </header>
     </div>
   )

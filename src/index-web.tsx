@@ -7,7 +7,7 @@ import { App } from './app';
 loadableReady(() => {
   hydrate(
     <React.StrictMode>
-      <Router>
+      <Router basename='/'>
         <App />
       </Router>
     </React.StrictMode>,

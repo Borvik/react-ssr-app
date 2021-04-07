@@ -2,19 +2,19 @@
 
 A bare bones react application scaffold, used to jumpstart the creation of a new react application. (another one?! - see why at the end)
 
-The folder `public` doesn't _currently_ server a purpose but there is a plan to utilize it.
+Files in the folder `public` will be copied to the build directory to be served as static files, _except_ `**/index.html` - these interfere with the operation of SSR when served with `express.static`.
 
 Currently the following features are available out-of-the-box:
 
 - SSR
 - SSR Hot Reloading? (seems to work)
 - Fast Refresh
-- Code Splitting (using `@loadable/component` - _not fully tested but should work_)
+- Code Splitting (using `@loadable/component`)
 - SVG imports
 - SASS/CSS packing
   - Note: have _not_ implmented importing class names from css
 - Typescript
-- Currently _**NO**_ router (but planning on react-router)
+- React Router
 
 Basic Use:
 

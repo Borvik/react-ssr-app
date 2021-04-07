@@ -5,18 +5,26 @@ const http = require('http');
 const { renderToString } = require('react-dom/server');
 const { ChunkExtractor } = require('@loadable/server');
 
+const { StaticRouter } = require('react-router-dom');
+
 const app = express();
 
 if (process.env.NODE_ENV !== 'production') {
   const rimraf = require('rimraf');
   const distPath = path.resolve(__dirname, '../dist');
+  const pubPath = path.resolve(__dirname, '../public');
   console.log('Cleaning Dist Directory');
   rimraf.sync(distPath);
 
   const webpack = require('webpack');
+  const fs = require ('fs');
   const config = require('../webpack.config')({NODE_ENV: process.env.NODE_ENV});
   const compiler = webpack(config);
-  const nodePathRegex = new RegExp(`dist\\${path.sep}node`, 'g');
+  const rePathSep = path.sep.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  const nodePathRegex = new RegExp(`dist${rePathSep}node`, 'g');
+
+  let publicFiles = fs.readdirSync(pubPath);
+  publicFiles = publicFiles.map(fileName => path.resolve(distPath, 'web', fileName));
   
   app.use(require('webpack-dev-middleware')(compiler, {
     serverSideRender: true,
@@ -25,7 +33,10 @@ if (process.env.NODE_ENV !== 'production') {
       colors: true,
     },
     writeToDisk: (path) => {
-      const canWriteToDisk = nodePathRegex.test(path) || /loadable-stats/.test(path);
+      const isNodePath = !!path.match(nodePathRegex);
+      const isLoadableStat = /loadable-stats/.test(path);
+      const isPublicFiles = publicFiles.includes(path);
+      const canWriteToDisk = isNodePath || isLoadableStat || isPublicFiles;
       return canWriteToDisk;
     },
   }));
@@ -54,7 +65,19 @@ app.get('*', (req, res) => {
     statsFile: webStats,
     publicPath: '/',
   });
-  const jsx = webExtractor.collectChunks(React.createElement(App));
+
+  const routerContext = {};
+  const staticRouterProps = { baseName: '/', context: routerContext, location: req.url };
+  const jsx = webExtractor.collectChunks(
+    React.createElement(StaticRouter, staticRouterProps,
+      React.createElement(App)
+    )
+  );
+
+  if (routerContext.url) {
+    res.redirect(301, routerContext.url);
+    return;
+  }
 
   const appHtml = renderToString(jsx);
   res.set('content-type', 'text/html');

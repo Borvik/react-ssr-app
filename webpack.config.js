@@ -4,11 +4,13 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const nodeExternals = require('webpack-node-externals');
 const LoadablePlugin = require('@loadable/webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 const webpack = require('webpack');
 
 module.exports = (env) => {
   const isDevelopment = env.NODE_ENV !== 'production';
   const DIST_PATH = path.resolve(__dirname, 'dist');
+  const PUBLIC_PATH = path.resolve(__dirname, 'public');
 
   console.log('Running BUILD in:', isDevelopment ? 'development' : 'production');
   const getConfig = (target) => ({
@@ -41,8 +43,15 @@ module.exports = (env) => {
             {
               loader: 'babel-loader',
               options: {
+                babelrc: false,
+                caller: { target },
+                presets: [
+                  '@babel/react',
+                ],
                 plugins: [
-                  isDevelopment && 'react-refresh/babel'
+                  '@babel/plugin-syntax-dynamic-import',
+                  '@loadable/babel-plugin',
+                  isDevelopment && 'react-refresh/babel',
                 ].filter(Boolean)
               },
             },
@@ -110,6 +119,19 @@ module.exports = (env) => {
         overlay: {
           sockIntegration: 'whm',
         },
+      }),
+      (target === 'web') && new CopyPlugin({
+        patterns: [
+          {
+            from: PUBLIC_PATH,
+            to: path.resolve(DIST_PATH, target),
+            globOptions: {
+              ignore: [
+                '**/index.html'
+              ]
+            }
+          },
+        ],
       }),
       new ForkTsCheckerWebpackPlugin(),
     ].filter(Boolean),
