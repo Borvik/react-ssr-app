@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const nodeExternals = require('webpack-node-externals');
 const LoadablePlugin = require('@loadable/webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const webpack = require('webpack');
 
 module.exports = (env) => {
@@ -25,6 +26,9 @@ module.exports = (env) => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      plugins: [
+        new TsconfigPathsPlugin(),
+      ],
     },
     externals: target === 'node'
       ? ['@loadable/component', nodeExternals()]
